@@ -5,7 +5,18 @@ import os
 import streamlit as st
 from openai import OpenAI
 
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+api_key = st.secrets.get("OPENAI_API_KEY", None)
+
+# 2. なければ環境変数（ローカル .env 用）
+if api_key is None:
+    api_key = os.environ.get("OPENAI_API_KEY")
+
+# 3. それでも無ければエラー表示して止める
+if api_key is None:
+    st.error("OPENAI_API_KEY が設定されていません。Secrets か .env を確認してください。")
+    st.stop()
+
+client = OpenAI(api_key=api_key)
 
 # 定義 
 
